@@ -1,19 +1,21 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <stdio.h>  // Standard input-output operations
+#include <stdlib.h> // Memory allocation and process control
+#include <string.h> // String handling functions
 
+// Define a structure to store student details
 typedef struct Student {
-    int id;
-    char name[50];
-    int maths, science, english;
-    char department[50];
-    struct Student* next;
+    int id; // Student ID
+    char name[50]; // Student name
+    int maths, science, english; // Marks in three subjects
+    char department[50]; // Department name
+    struct Student* next; // Pointer to the next student in the list
 } Student;
 
-Student* head = NULL;
+Student* head = NULL; // Initialize the head of the linked list
 
+// Function to add a student record
 void addStudent() {
-    Student* newStudent = (Student*)malloc(sizeof(Student));
+    Student* newStudent = (Student*)malloc(sizeof(Student)); // Allocate memory for a new student
     printf("Enter Student ID: ");
     scanf("%d", &newStudent->id);
     printf("Enter Name: ");
@@ -22,40 +24,44 @@ void addStudent() {
     scanf("%d %d %d", &newStudent->maths, &newStudent->science, &newStudent->english);
     printf("Enter Department: ");
     scanf("%s", newStudent->department);
-    newStudent->next = head;
-    head = newStudent;
+    newStudent->next = head; // Insert student at the beginning of the list
+    head = newStudent; // Update head pointer
 }
 
+// Function to display all student records
 void displayStudents() {
     Student* temp = head;
-    while (temp) {
-        printf("ID: %d, Name: %s, Marks: %d %d %d, Department: %s\n", 
+    while (temp) { // Traverse the linked list
+        printf("ID: %d, Name: %s, Marks: Maths: %d, Science: %d, English: %d, Department: %s\n", 
                temp->id, temp->name, temp->maths, temp->science, temp->english, temp->department);
-        temp = temp->next;
+        temp = temp->next; // Move to next student
     }
 }
 
+// Function to search for a student by ID
 Student* searchStudent(int id) {
     Student* temp = head;
     while (temp) {
-        if (temp->id == id) return temp;
+        if (temp->id == id) return temp; // Return student if found
         temp = temp->next;
     }
-    return NULL;
+    return NULL; // Return NULL if not found
 }
 
+// Function to delete a student record by ID
 void deleteStudent(int id) {
     Student* temp = head, *prev = NULL;
     while (temp && temp->id != id) {
         prev = temp;
         temp = temp->next;
     }
-    if (!temp) return;
-    if (!prev) head = temp->next;
-    else prev->next = temp->next;
-    free(temp);
+    if (!temp) return; // If student not found, exit
+    if (!prev) head = temp->next; // If deleting head, update head
+    else prev->next = temp->next; // Unlink the node
+    free(temp); // Free memory
 }
 
+// Function to update a student's details
 void updateStudent(int id) {
     Student* temp = searchStudent(id);
     if (temp) {
@@ -66,6 +72,7 @@ void updateStudent(int id) {
     }
 }
 
+// Function to find the student with the highest marks
 void highestMarksStudent() {
     Student* temp = head, *topper = head;
     int maxMarks = 0;
@@ -80,6 +87,7 @@ void highestMarksStudent() {
     printf("Topper: ID: %d, Name: %s, Total Marks: %d\n", topper->id, topper->name, maxMarks);
 }
 
+// Function to count the total number of students
 void countStudents() {
     int count = 0;
     Student* temp = head;
@@ -90,6 +98,7 @@ void countStudents() {
     printf("Total Students: %d\n", count);
 }
 
+// Function to reverse the student list
 void reverseList() {
     Student *prev = NULL, *curr = head, *next = NULL;
     while (curr) {
@@ -101,36 +110,22 @@ void reverseList() {
     head = prev;
 }
 
+// Function to sort students by total marks
 void sortStudents(int ascending) {
     for (Student* i = head; i; i = i->next) {
         for (Student* j = i->next; j; j = j->next) {
             int totalI = i->maths + i->science + i->english;
             int totalJ = j->maths + j->science + j->english;
             if ((ascending && totalI > totalJ) || (!ascending && totalI < totalJ)) {
-                int tempId = i->id;
-                char tempName[50], tempDept[50];
-                int tempMaths = i->maths, tempScience = i->science, tempEnglish = i->english;
-                strcpy(tempName, i->name);
-                strcpy(tempDept, i->department);
-                
-                i->id = j->id;
-                strcpy(i->name, j->name);
-                strcpy(i->department, j->department);
-                i->maths = j->maths;
-                i->science = j->science;
-                i->english = j->english;
-                
-                j->id = tempId;
-                strcpy(j->name, tempName);
-                strcpy(j->department, tempDept);
-                j->maths = tempMaths;
-                j->science = tempScience;
-                j->english = tempEnglish;
+                Student temp = *i;
+                *i = *j;
+                *j = temp;
             }
         }
     }
 }
 
+// Function to calculate the average marks of all students
 void averageMarks() {
     int sum = 0, count = 0;
     Student* temp = head;
@@ -142,6 +137,7 @@ void averageMarks() {
     if (count) printf("Average Marks: %.2f\n", (float)sum / (count * 3));
 }
 
+// Main function to handle user interactions
 int main() {
     int choice, id;
     while (1) {
